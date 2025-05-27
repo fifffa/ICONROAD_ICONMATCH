@@ -275,57 +275,25 @@ const playerSearch = async (selectedSeason = "", minOvr = 0) => {
 async function main() {
   try {
     const data = {
-      id: "챔피언스 저니 6000p",
+      id: "아이콘 로드 3500",
       updateTime: "",
       seasonPack: [],
     };
 
-    const BTB_TOP_90 = {
-      packName: "BTB Top 90",
+    const ICON_TM_TOP_ALL = {
+      packName: "ICON TM 클래스 Top Price ALL 동일확률 프리미엄 팩 (5강)",
       playerPrice: [],
     };
-
-    const SPL_TOP_75 = {
-      packName: "SPL TOP 75",
+    const KB24_TOP_ALL = {
+      packName: "24KB 클래스 Top Price ALL 동일확률 스페셜팩 (8강)",
       playerPrice: [],
     };
-
-    const HG_TOP_100 = {
-      packName: "HG TOP 100",
+    const ICONS_MATCHANDICON = {
+      packName: "ICONS MATCH 포함 Top Price 550 스페셜팩 (5~8강, 110+)",
       playerPrice: [],
     };
-
-    const NG23_TOP_65 = {
-      packName: "23NG TOP 65",
-      playerPrice: [],
-    };
-
-    const LOL_FA_22HEROES_TOP_80 = {
-      packName: "LOL,FA,22HEROES TOP 80",
-      playerPrice: [],
-    };
-
-    const NTG_UP_VTR_MOG_LH_TKL_TOP_100 = {
-      packName: "NTG,UP,VTR,MOG,LH,TKL TOP 100",
-      playerPrice: [],
-    };
-    const UT_JNM_24HEROES_DC_JVA_CC_FCA_23HW_HG_RTN_23HEROES_RMCK_LN_SPL_23NG_LOL_FA_23KFA_22HEROES_BTB_CAP_CFA_EBS_BOE21_NTG_UP_22KFA_TOP_350 =
-      {
-        packName:
-          "UT,JNM,24HEROES,DC,JVA,CC,FCA,23HW,HG,RTN,23HEROES,RMCF,LN,SPL,23NG,LOL,FA,23KFA,22HEROES,BTB,CAP,CFA,EBS,BOE21,NTG,UP,22KFA TOP 350",
-        playerPrice: [],
-      };
-
-    const RTN_TOP_70 = {
-      packName: "RTN TOP 70",
-      playerPrice: [],
-    };
-    const RMCF_TOP_80 = {
-      packName: "RMCF 포함 TOP 80",
-      playerPrice: [],
-    };
-    const HEROES23_TOP_75 = {
-      packName: "23HEROES 포함 TOP 75",
+    const UT_TOP_400 = {
+      packName: "UT 포함 Top Price 400 스페셜팩 (8강, 104+)",
       playerPrice: [],
     };
 
@@ -337,43 +305,37 @@ async function main() {
     let ICONTM_RESULTS = await playerPriceValue(ICONTM_LIST, 5); // playerPriceValue(데이터 , 강화등급)
     await saveToDB(ICONTM_RESULTS);
     const ICONTM_FINAL = SortAndSlice(ICONTM_RESULTS); // SortAndSlice(데이터 , 자르기숫자)
+
     for (let item of ICONTM_FINAL) {
       const playerDocs = await Price.find({ id: item.id });
-      if (playerDocs.length > 0) {
+      if (playerDocs.length > 0 && playerDocs[0]._id) {
         const playerData = {
           grade: item.prices.grade,
+          playerPrice: playerDocs[0]?._id || null,
         };
-        playerDocs.map((p) => {
-          playerData.playerPrice = p._id;
-        });
         ICON_TM_TOP_ALL.playerPrice.push(playerData);
       }
     }
     data.seasonPack.push({ ...ICON_TM_TOP_ALL });
+    // // -------------------------------------- KB24_ALL--------------------------------------
 
-    // // // -------------------------------------- KB24_ALL--------------------------------------
+    const KB24_ALL_LIST = await playerSearch([830], 0); // playerSearch(시즌넘버, 최소오버롤)
+    let KB24_ALL_RESULTS = await playerPriceValue(KB24_ALL_LIST, 8); // playerPriceValue(데이터 , 강화등급)
+    await saveToDB(KB24_ALL_RESULTS);
+    const KB24_ALL_FINAL = SortAndSlice(KB24_ALL_RESULTS); // SortAndSlice(데이터 , 자르기숫자)
 
-    const KB24_LIST = await playerSearch([830], 0); // playerSearch(시즌넘버, 최소오버롤)
-    let KB24_RESULTS = await playerPriceValue(KB24_LIST, 8); // playerPriceValue(데이터 , 강화등급)
-    console.log("KB24_RESULTS:", KB24_RESULTS);
-    await saveToDB(KB24_RESULTS);
-    const KB24_FINAL = SortAndSlice(KB24_RESULTS); // SortAndSlice(데이터 , 자르기숫자)
-    for (let item of KB24_FINAL) {
+    for (let item of KB24_ALL_FINAL) {
       const playerDocs = await Price.find({ id: item.id });
-      if (playerDocs.length > 0) {
+      if (playerDocs.length > 0 && playerDocs[0]._id) {
         const playerData = {
           grade: item.prices.grade,
+          playerPrice: playerDocs[0]?._id || null,
         };
-        playerDocs.map((p) => {
-          playerData.playerPrice = p._id;
-        });
-
         KB24_TOP_ALL.playerPrice.push(playerData);
       }
     }
     data.seasonPack.push({ ...KB24_TOP_ALL });
-
-    // // -------------------------------------- ICONS MATCH, ICON, UT, JNM, 24HEROES, DC, JVA, CC, FCA, 23HW, HG, RTN, 23HEROES,RMCF _TOP 550--------------------------------------
+    // // --------------------------------------  ICONS MATCH, ICON, UT, JNM, 24HEROES, DC, JVA, CC, FCA, 23HW, HG, RTN, 23HEROES,RMCF _TOP 550--------------------------------------
 
     const ICONMATCH_LIST = await playerSearch(
       [111, 101, 814, 813, 811, 802, 801, 289, 290, 291, 283, 284, 281, 274],
@@ -385,22 +347,19 @@ async function main() {
     ); // playerPriceValue(데이터 , 강화등급)
     await saveToDB(ICONMATCH_RESULTS);
     const ICONMATCH_FINAL = SortAndSlice(ICONMATCH_RESULTS, 550); // SortAndSlice(데이터 , 자르기숫자)
+
     for (let item of ICONMATCH_FINAL) {
       const playerDocs = await Price.find({ id: item.id });
-      if (playerDocs.length > 0) {
+      if (playerDocs.length > 0 && playerDocs[0]._id) {
         const playerData = {
           grade: item.prices.grade,
+          playerPrice: playerDocs[0]?._id || null,
         };
-        playerDocs.map((p) => {
-          playerData.playerPrice = p._id;
-        });
-
         ICONS_MATCHANDICON.playerPrice.push(playerData);
       }
     }
     data.seasonPack.push({ ...ICONS_MATCHANDICON });
-
-    // // --------------------------------------  UT, JNM, 24HEROES, DC, JVA, CC, FCA, 23HW, HG, RTN, 23HEROES, RMCF, LN, SPL, 23NG, LOL, FA, 23KFA, 22HEROES, BTB, CAP, CFA, EBS TOP 400--------------------------------------
+    // // -------------------------------------- UT, JNM, 24HEROES, DC, JVA, CC, FCA, 23HW, HG, RTN, 23HEROES, RMCF, LN, SPL, 23NG, LOL, FA, 23KFA, 22HEROES, BTB, CAP, CFA, EBS TOP 400--------------------------------------
 
     // const UT_TOP_400_LIST = await playerSearch(
     //   [
@@ -412,30 +371,30 @@ async function main() {
     // let UT_TOP_400_RESULTS = await playerPriceValue(UT_TOP_400_LIST, 8); // playerPriceValue(데이터 , 강화등급)
     // await saveToDB(UT_TOP_400_RESULTS);
     // const UT_TOP_400_FINAL = SortAndSlice(UT_TOP_400_RESULTS, 400); // SortAndSlice(데이터 , 자르기숫자)
+
     // for (let item of UT_TOP_400_FINAL) {
     //   const playerDocs = await Price.find({ id: item.id });
-    //   if (playerDocs.length > 0) {
+    //   if (playerDocs.length > 0 && playerDocs[0]._id) {
     //     const playerData = {
     //       grade: item.prices.grade,
+    //       playerPrice: playerDocs[0]?._id || null,
     //     };
-    //     playerDocs.map((p) => {
-    //       playerData.playerPrice = p._id;
-    //     });
-
     //     UT_TOP_400.playerPrice.push(playerData);
     //   }
     // }
     // data.seasonPack.push({ ...UT_TOP_400 });
 
+    // -------------------------------------------------------------------------------------------------------------------------------
+
     const doc = await EventValueChart.findOne({ id: "아이콘 로드 3500" });
 
     let mergedSeasonPacks = [];
+    const now = new Date();
+    const koreaTime = new Date(now.getTime() + 9 * 60 * 60 * 1000);
 
     if (doc) {
-      // 2. 기존 seasonPack 가져오기
       const existingSeasonPacks = doc.seasonPack;
 
-      // 3. 병합: 같은 packName이면 덮어쓰고, 없으면 추가
       mergedSeasonPacks = [...existingSeasonPacks];
 
       for (const incoming of data.seasonPack) {
@@ -444,28 +403,29 @@ async function main() {
         );
 
         if (index > -1) {
-          // 같은 packName 있으면 덮어쓰기
           mergedSeasonPacks[index] = {
             ...mergedSeasonPacks[index],
             ...incoming,
           };
         } else {
-          // 없으면 추가
           mergedSeasonPacks.push(incoming);
         }
       }
     } else {
-      // 문서 없을 경우 새로 만듦
       mergedSeasonPacks = data.seasonPack;
     }
 
-    // 4. 최종 업데이트
+    // 🔧 에러 방지를 위한 toObject 처리
+    const finalSeasonPack = mergedSeasonPacks.map((pack) =>
+      typeof pack.toObject === "function" ? pack.toObject() : pack
+    );
+
     await EventValueChart.updateOne(
       { id: "아이콘 로드 3500" },
       {
         $set: {
-          updateTime: new Date(),
-          seasonPack: mergedSeasonPacks,
+          updateTime: koreaTime,
+          seasonPack: finalSeasonPack,
         },
       },
       { upsert: true }
