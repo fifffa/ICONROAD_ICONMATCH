@@ -159,7 +159,7 @@ async function saveToDB(results) {
   }
 }
 
-function SortAndSlice(result, slice = 100) {
+function SortAndSlice(result, slice) {
   let data = [...result];
 
   data.sort((a, b) => {
@@ -170,14 +170,12 @@ function SortAndSlice(result, slice = 100) {
       HanTools.parseNumber(b.prices.price.replace(",", ""))
     );
 
-    // // Sort in descending order based on average position value
-    console.log("positionsB:", positionsB);
     return positionsB - positionsA;
   });
 
-  data = data.slice(0, slice);
-
-  console.log("data:", data);
+  if (slice !== undefined && slice !== null) {
+    data = data.slice(0, slice);
+  }
 
   return data;
 }
@@ -275,7 +273,7 @@ const playerSearch = async (selectedSeason = "", minOvr = 0) => {
 async function main() {
   try {
     const data = {
-      id: "new new 아이콘 로드 3500",
+      id: "new 아이콘 로드 3500",
       updateTime: "",
       seasonPack: [],
     };
