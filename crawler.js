@@ -290,8 +290,8 @@ async function main() {
       packName: "ICON TM 클래스 Top Price ALL 동일확률 프리미엄 팩 (5강)",
       playerPrice: [],
     };
-    const ICONS_MATCHANDICON = {
-      packName: "ICONS MATCH 포함 Top Price 550 스페셜팩 (5~8강, 111+)",
+    const CU_TOP_150 = {
+      packName: "CU 클래스 Top Price 150 스페셜팩 (8강, 110+)",
       playerPrice: [],
     };
 
@@ -317,28 +317,28 @@ async function main() {
     // data.seasonPack.push({ ...ICON_TM_TOP_ALL });
     // --------------------------------------   ICONS MATCH, ICON, MDL, UT, 24KB, DC, CC, 23HW, HG _TOP 550--------------------------------------
 
-    const ICONMATCH_LIST = await playerSearch(
+    const CU_TOP_150_LIST = await playerSearch(
       [111, 101, 821, 814, 830, 802, 289, 291, 283],
       111
     ); // playerSearch(시즌넘버, 최소오버롤)
-    let ICONMATCH_RESULTS = await playerPriceValue(
-      ICONMATCH_LIST,
+    let CU_TOP_150_RESULTS = await playerPriceValue(
+      CU_TOP_150_LIST,
       [5, 6, 7, 8]
     ); // playerPriceValue(데이터 , 강화등급)
-    await saveToDB(ICONMATCH_RESULTS);
-    const ICONMATCH_FINAL = SortAndSlice(ICONMATCH_RESULTS, 550); // SortAndSlice(데이터 , 자르기숫자)
+    await saveToDB(CU_TOP_150_RESULTS);
+    const CU_TOP_150_FINAL = SortAndSlice(CU_TOP_150_RESULTS, 550); // SortAndSlice(데이터 , 자르기숫자)
 
-    for (let item of ICONMATCH_FINAL) {
+    for (let item of CU_TOP_150_FINAL) {
       const playerDocs = await Price.find({ id: item.id });
       if (playerDocs.length > 0 && playerDocs[0]._id) {
         const playerData = {
           grade: item.prices.grade,
           playerPrice: playerDocs[0]?._id || null,
         };
-        ICONS_MATCHANDICON.playerPrice.push(playerData);
+        CU_TOP_150.playerPrice.push(playerData);
       }
     }
-    data.seasonPack.push({ ...ICONS_MATCHANDICON });
+    data.seasonPack.push({ ...CU_TOP_150 });
 
     // -------------------------------------------------------------------------------------------------------------------------------
 
